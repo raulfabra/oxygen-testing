@@ -1,1 +1,2 @@
-# Testing Functional Hotel Miranda + Dashboard
+# Functional test Hotel Miranda + Dashboard
+Testing with Jest and Cypress
