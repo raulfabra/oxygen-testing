@@ -1,7 +1,7 @@
 class Room {
-  constructor(name, rate, discount) {
+  constructor(name, bookings, rate, discount) {
     this.name = name;
-    this.bookings = [];
+    this.bookings = bookings;
     this.rate = rate;
     this.discount = discount;
   }
@@ -37,3 +37,5 @@ class Booking {
     // Devuelve el precio final de la reserva contando el descuento de la habitacion (Hotel) y de la reserva (Pagina de reserva)
   }
 }
+
+module.exports = { Room, Booking };
