@@ -1,0 +1,15 @@
+{
+  "name": "oxygen-testing",
+  "version": "1.0.0",
+  "description": "Testing with Jest and Cypress",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "29.7.0"
+  }
+}
