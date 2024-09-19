@@ -78,6 +78,8 @@ class Booking {
 
   fee() {
     // Devuelve el precio final de la reserva contando el descuento de la habitacion (Hotel) y de la reserva (Pagina de reserva)
+    const roomFee = this.room.rate - this.room.rate * (this.room.discount / 100);
+    return roomFee - roomFee * (this.discount / 100);
   }
 }
 

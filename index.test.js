@@ -82,7 +82,7 @@ describe("Room tests", () => {
     expect(room.occupancyPercentage(true, false)).toBe("Invalid data");
     expect(room.occupancyPercentage([])).toBe("Invalid data");
     expect(room.occupancyPercentage(new Date("quesoParmesano"))).toBe("Invalid data");
-    expect(room.occupancyPercentage(new Date("quesoParmesano"), new Date("tomato"))).toBe("Invalid data");
+    expect(room.occupancyPercentage(new Date("quesoParmesano"), new Date("JamonJoselito"))).toBe("Invalid data");
   });
 
   test("check if occupancy percentage function actually works", () => {
@@ -98,7 +98,7 @@ describe("Room tests", () => {
     expect(Room.totalOccupancyPercentage(true, false, true)).toBe("Invalid data");
     expect(Room.totalOccupancyPercentage([])).toBe("Invalid data");
     expect(Room.totalOccupancyPercentage(new Date("quesoParmesano"))).toBe("Invalid data");
-    expect(Room.totalOccupancyPercentage([], new Date("quesoParmesano"), new Date("tomato"))).toBe("Invalid data");
+    expect(Room.totalOccupancyPercentage([], new Date("quesoParmesano"), new Date("JamonJoselito"))).toBe("Invalid data");
   });
 
   test("check if static occupancy percentage function actually works", () => {
@@ -113,11 +113,38 @@ describe("Room tests", () => {
     expect(Room.availableRooms(true, false, true)).toBe("Invalid data");
     expect(Room.availableRooms([])).toBe("Invalid data");
     expect(Room.availableRooms(new Date("quesoParmesano"))).toBe("Invalid data");
-    expect(Room.availableRooms([], new Date("quesoParmesano"), new Date("tomato"))).toBe("Invalid data");
+    expect(Room.availableRooms([], new Date("quesoParmesano"), new Date("JamonJoselito"))).toBe("Invalid data");
   });
 
   test("check if static occupancy percentage function actually works", () => {
     expect(Room.availableRooms(roomList, new Date("08/26/2024"), new Date("08/28/2024"))).toHaveLength(0);
     expect(Room.availableRooms(roomList, new Date("08/26/2030"), new Date("08/28/2030"))).toHaveLength(2);
+  });
+});
+
+describe("Booking test", () => {
+  const booking = new Booking(booking1.name, booking1.email, booking1.checkin, booking1.checkout, booking1.discount, room1);
+  const booking2 = new Booking(mockBooking2.name, mockBooking2.email, mockBooking2.checkin, mockBooking2.checkout, mockBooking2.discount, mockRoom);
+
+  test("check for invalid data", () => {
+    expect(new Booking("quesoParmesano").result).toBe("Invalid data");
+    expect(new Booking(123).result).toBe("Invalid data");
+    expect(new Booking(true).result).toBe("Invalid data");
+    expect(new Booking(true, true, true, true).result).toBe("Invalid data");
+    expect(new Booking("JamonJoselito", "quesoParmesano", [], true, false).result).toBe("Invalid data");
+  });
+
+  test("check for valid data", () => {
+    expect(booking.name).toBe("Mock Booking");
+    expect(booking.email).toBe("booking@fake.com");
+    expect(booking.checkIn.getTime()).toBe(new Date("08/26/2024").getTime());
+    expect(booking.checkOut.getTime()).toBe(new Date("09/26/2024").getTime());
+    expect(booking.discount).toBe(10);
+    expect(booking.room).toBe(mockRoom);
+  });
+
+  test("check for fee function", () => {
+    expect(booking.fee()).toBe(162);
+    expect(booking2.fee()).toBe(126);
   });
 });
