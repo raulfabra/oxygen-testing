@@ -5,7 +5,7 @@ interface RoomInterface {
   discount: number;
 }
 
-class Room {
+export class Room {
   name: string;
   bookings: Booking[];
   price: number;
@@ -81,25 +81,25 @@ class Room {
 interface BookingInterface {
   name: string;
   email: string;
-  arrival: string;
-  departure: string;
+  checkIn: Date;
+  checkOut: Date;
   discount: number;
   room: Room;
 }
 
-class Booking {
+export class Booking {
   name: string;
   email: string;
-  checkIn: string;
-  checkOut: string;
+  checkIn: Date;
+  checkOut: Date;
   discount: number;
   room: Room;
 
-  constructor({ name, email, arrival, departure, discount, room }: BookingInterface) {
+  constructor({ name, email, checkIn, checkOut, discount, room }: BookingInterface) {
     this.name = name;
     this.email = email;
-    this.checkIn = arrival;
-    this.checkOut = departure;
+    this.checkIn = checkIn;
+    this.checkOut = checkOut;
     this.discount = discount;
     this.room = room;
   }
@@ -110,5 +110,3 @@ class Booking {
     return roomFee - roomFee * (this.discount / 100);
   }
 }
-
-module.exports = { Room, Booking };

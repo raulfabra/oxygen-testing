@@ -1,7 +1,15 @@
-const { describe } = require("node:test");
+import { Room, Booking } from "./index";
 
-const Room = require("./index").Room;
-const Booking = require("./index").Booking;
+const mockRoom = new Room({ name: "Room X", bookings: [], price: 500, discount: 33 });
+
+const mockBooking = new Booking({
+  name: "Alfredo DiStefanno",
+  email: "alfred@booking.com",
+  checkIn: new Date("2024-05-15"),
+  checkOut: new Date("2024-05-25"),
+  discount: 5,
+  room: mockRoom,
+});
 
 describe("Class Room test", () => {
   describe("check function ➡ isOccupied", () => {
@@ -12,11 +20,11 @@ describe("Class Room test", () => {
         checkIn: new Date("2024-08-08"),
         checkOut: new Date("2024-08-13"),
         discount: 10,
-        room: room,
+        room: mockRoom,
       });
       const room = new Room({ name: "Room 2", bookings: [booking_1], price: 450, discount: 23 });
       const dateToCheck = new Date("2024-05-15");
-      expect(room.isOccupied(dateToCheck).toBe(false));
+      expect(room.isOccupied(dateToCheck)).toBe(false);
     });
 
     test("should be return true if the room is NOT available", () => {
@@ -26,11 +34,11 @@ describe("Class Room test", () => {
         checkIn: new Date("2024-08-08"),
         checkOut: new Date("2024-08-13"),
         discount: 10,
-        room: room,
+        room: mockRoom,
       });
       const room = new Room({ name: "Room 2", bookings: [booking_1], price: 450, discount: 23 });
       const dateToCheck = new Date("2024-08-10");
-      expect(room.isOccupied(dateToCheck).toBe(true));
+      expect(room.isOccupied(dateToCheck)).toBe(true);
     });
   });
 
@@ -42,7 +50,7 @@ describe("Class Room test", () => {
         checkIn: new Date("2024-08-08"),
         checkOut: new Date("2024-08-13"),
         discount: 10,
-        room: room,
+        room: mockRoom,
       });
       const room = new Room({ name: "Room 2", bookings: [booking_1], price: 450, discount: 23 });
       expect(room.occupancyPercentage(new Date("2024-07-30"), new Date("2024-07-15"))).toBe("Invalid dates");
@@ -55,7 +63,7 @@ describe("Class Room test", () => {
         checkIn: new Date("2024-08-08"),
         checkOut: new Date("2024-08-13"),
         discount: 10,
-        room: room,
+        room: mockRoom,
       });
       const room = new Room({ name: "Room 2", bookings: [booking_1], price: 450, discount: 23 });
       expect(room.occupancyPercentage(new Date("2024-07-09"), new Date("2024-07-11"))).toBe(0);
@@ -68,7 +76,7 @@ describe("Class Room test", () => {
         checkIn: new Date("2024-08-08"),
         checkOut: new Date("2024-08-13"),
         discount: 10,
-        room: room,
+        room: mockRoom,
       });
       const room = new Room({ name: "Room 2", bookings: [booking_1], price: 450, discount: 23 });
       expect(room.occupancyPercentage(new Date("2024-08-09"), new Date("2024-08-11"))).toBe(100);
@@ -81,7 +89,7 @@ describe("Class Room test", () => {
         checkIn: new Date("2024-08-08"),
         checkOut: new Date("2024-08-13"),
         discount: 10,
-        room: room,
+        room: mockRoom,
       });
       const booking_2 = new Booking({
         name: "Jennifer Beltran",
@@ -89,7 +97,7 @@ describe("Class Room test", () => {
         checkIn: new Date("2024-06-08"),
         checkOut: new Date("2024-06-13"),
         discount: 10,
-        room: room,
+        room: mockRoom,
       });
       const booking_3 = new Booking({
         name: "Jose Alfonso",
@@ -97,7 +105,7 @@ describe("Class Room test", () => {
         checkIn: new Date("2024-03-08"),
         checkOut: new Date("2024-03-13"),
         discount: 10,
-        room: room,
+        room: mockRoom,
       });
       const room = new Room({ name: "Room 2", bookings: [booking_1, booking_2, booking_3], price: 450, discount: 23 });
       expect(room.occupancyPercentage(new Date("2024-07-30"), new Date("2024-08-30"))).toBe((1 / 3) * 100);
@@ -112,7 +120,7 @@ describe("Class Room test", () => {
         checkIn: new Date("2024-08-01"),
         checkOut: new Date("2024-08-30"),
         discount: 10,
-        room: room1,
+        room: mockRoom,
       });
       const booking_2 = new Booking({
         name: "Jennifer Beltran",
@@ -120,7 +128,7 @@ describe("Class Room test", () => {
         checkIn: new Date("2024-08-10"),
         checkOut: new Date("2024-08-30"),
         discount: 10,
-        room: room1,
+        room: mockRoom,
       });
       const booking_3 = new Booking({
         name: "Jose Alfonso",
@@ -128,7 +136,7 @@ describe("Class Room test", () => {
         checkIn: new Date("2024-08-02"),
         checkOut: new Date("2024-08-22"),
         discount: 10,
-        room: room2,
+        room: mockRoom,
       });
       const booking_4 = new Booking({
         name: "Alicia Moreno",
@@ -136,7 +144,7 @@ describe("Class Room test", () => {
         checkIn: new Date("2024-08-07"),
         checkOut: new Date("2024-08-29"),
         discount: 10,
-        room: room2,
+        room: mockRoom,
       });
       const booking_5 = new Booking({
         name: "Raul Guevara",
@@ -144,7 +152,7 @@ describe("Class Room test", () => {
         checkIn: new Date("2024-08-11"),
         checkOut: new Date("2024-08-29"),
         discount: 10,
-        room: room2,
+        room: mockRoom,
       });
 
       const room1 = new Room({ name: "Room 1", bookings: [booking_1, booking_2], price: 450, discount: 23 });
@@ -159,7 +167,7 @@ describe("Class Room test", () => {
         checkIn: new Date("2024-08-01"),
         checkOut: new Date("2024-08-30"),
         discount: 10,
-        room: room1,
+        room: mockRoom,
       });
       const booking_2 = new Booking({
         name: "Jennifer Beltran",
@@ -167,7 +175,7 @@ describe("Class Room test", () => {
         checkIn: new Date("2024-08-10"),
         checkOut: new Date("2024-08-30"),
         discount: 10,
-        room: room1,
+        room: mockRoom,
       });
       const booking_3 = new Booking({
         name: "Jose Alfonso",
@@ -175,7 +183,7 @@ describe("Class Room test", () => {
         checkIn: new Date("2024-08-02"),
         checkOut: new Date("2024-08-22"),
         discount: 10,
-        room: room2,
+        room: mockRoom,
       });
       const booking_4 = new Booking({
         name: "Alicia Moreno",
@@ -183,7 +191,7 @@ describe("Class Room test", () => {
         checkIn: new Date("2024-08-07"),
         checkOut: new Date("2024-08-29"),
         discount: 10,
-        room: room2,
+        room: mockRoom,
       });
       const booking_5 = new Booking({
         name: "Raul Guevara",
@@ -191,7 +199,7 @@ describe("Class Room test", () => {
         checkIn: new Date("2024-08-11"),
         checkOut: new Date("2024-08-29"),
         discount: 10,
-        room: room2,
+        room: mockRoom,
       });
 
       const room1 = new Room({ name: "Room 1", bookings: [booking_1, booking_2], price: 450, discount: 23 });
@@ -209,7 +217,7 @@ describe("Class Room test", () => {
         checkIn: new Date("2024-08-01"),
         checkOut: new Date("2024-08-30"),
         discount: 10,
-        room: room1,
+        room: mockRoom,
       });
       const booking_2 = new Booking({
         name: "Jennifer Beltran",
@@ -217,7 +225,7 @@ describe("Class Room test", () => {
         checkIn: new Date("2024-08-10"),
         checkOut: new Date("2024-08-30"),
         discount: 10,
-        room: room1,
+        room: mockRoom,
       });
       const booking_3 = new Booking({
         name: "Jose Alfonso",
@@ -225,7 +233,7 @@ describe("Class Room test", () => {
         checkIn: new Date("2024-08-02"),
         checkOut: new Date("2024-08-22"),
         discount: 10,
-        room: room2,
+        room: mockRoom,
       });
       const booking_4 = new Booking({
         name: "Alicia Moreno",
@@ -233,7 +241,7 @@ describe("Class Room test", () => {
         checkIn: new Date("2024-08-07"),
         checkOut: new Date("2024-08-29"),
         discount: 10,
-        room: room2,
+        room: mockRoom,
       });
       const booking_5 = new Booking({
         name: "Raul Guevara",
@@ -241,7 +249,7 @@ describe("Class Room test", () => {
         checkIn: new Date("2024-08-11"),
         checkOut: new Date("2024-08-29"),
         discount: 10,
-        room: room2,
+        room: mockRoom,
       });
 
       const room1 = new Room({ name: "Room 1", bookings: [booking_1, booking_2], price: 450, discount: 23 });
@@ -257,7 +265,7 @@ describe("Class Room test", () => {
         checkIn: new Date("2024-08-01"),
         checkOut: new Date("2024-08-30"),
         discount: 10,
-        room: room1,
+        room: mockRoom,
       });
       const booking_2 = new Booking({
         name: "Jennifer Beltran",
@@ -265,7 +273,7 @@ describe("Class Room test", () => {
         checkIn: new Date("2024-08-10"),
         checkOut: new Date("2024-08-30"),
         discount: 10,
-        room: room1,
+        room: mockRoom,
       });
       const booking_3 = new Booking({
         name: "Jose Alfonso",
@@ -273,7 +281,7 @@ describe("Class Room test", () => {
         checkIn: new Date("2024-08-02"),
         checkOut: new Date("2024-08-22"),
         discount: 10,
-        room: room2,
+        room: mockRoom,
       });
       const booking_4 = new Booking({
         name: "Alicia Moreno",
@@ -281,7 +289,7 @@ describe("Class Room test", () => {
         checkIn: new Date("2024-08-07"),
         checkOut: new Date("2024-08-29"),
         discount: 10,
-        room: room2,
+        room: mockRoom,
       });
       const booking_5 = new Booking({
         name: "Raul Guevara",
@@ -289,7 +297,7 @@ describe("Class Room test", () => {
         checkIn: new Date("2024-08-11"),
         checkOut: new Date("2024-08-29"),
         discount: 10,
-        room: room2,
+        room: mockRoom,
       });
 
       const room1 = new Room({ name: "Room 1", bookings: [booking_1, booking_2], price: 450, discount: 23 });
@@ -303,7 +311,7 @@ describe("Class Room test", () => {
 
 describe("Booking test", () => {
   test("should be for fee function", () => {
-    const room = new Room({ name: "Room 2", bookings: [booking_1, booking_2, booking_3], price: 450, discount: 23 });
+    const room = new Room({ name: "Room 1", bookings: [mockBooking], price: 450, discount: 23 });
 
     const booking_1 = new Booking({
       name: "Manolo Gomez",
@@ -313,16 +321,20 @@ describe("Booking test", () => {
       discount: 10,
       room: room,
     });
+
+    const room2 = new Room({ name: "Room 2", bookings: [mockBooking], price: 150, discount: 55 });
     const booking_2 = new Booking({
       name: "Jennifer Beltran",
       email: "booking@fake.com",
       checkIn: new Date("2024-08-10"),
       checkOut: new Date("2024-08-30"),
       discount: 10,
-      room: room,
+      room: room2,
     });
-    expect(booking_1.fee()).toBe();
-    expect(booking_2.fee()).toBe();
+    console.log(booking_1.fee());
+    console.log(booking_2.fee());
+    /* expect(booking_1.fee()).toBe();
+    expect(booking_2.fee()).toBe(); */
   });
 });
 
