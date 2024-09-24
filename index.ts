@@ -18,7 +18,7 @@ class Room {
     this.discount = discount;
   }
 
-  static totalOccupancyPercentage(rooms: Room[], startDate: string, endDate: string) {
+  static totalOccupancyPercentage(rooms: Room[], startDate: Date, endDate: Date) {
     // Devuelve el Percentage de Ocupación TOTAL de todo el hotel dentro del rango pasado por parámetros, incluidos los extremos
     let percentageSum = 0;
 
@@ -28,26 +28,26 @@ class Room {
 
     return percentageSum / rooms.length;
   }
-  static availableRooms(rooms: Room[], startDate: string, endDate: string) {
+  static availableRooms(rooms: Room[], startDate: Date, endDate: Date) {
     // Devuelve las habitaciones que no estan ocupadas en el rango pasado por parametros, incluidos los extremos. === HABITACIONES LIBRES ENTRE EL RANGO PASADO
-    let occupiedList = [];
+    let availableRoomsList = [];
 
     for (const room of rooms) {
       if (room.occupancyPercentage(startDate, endDate) < 100) {
-        occupiedList.push(room);
+        availableRoomsList.push(room);
       }
     }
 
-    return occupiedList;
+    return availableRoomsList;
   }
 
-  isOccupied(date: string) {
+  isOccupied(date: Date) {
     // Devuelve Falso si la hab. no esta ocupada = DISPONIBLE
     // Devuelve True si la hab. esta ocupada = RESERVADA
     for (const booking of this.bookings) {
       const dateTimeBooking = date;
-      const startDateBooking = booking.checkIn;
-      const endDateBooking = booking.checkOut;
+      const startDateBooking = new Date(booking.checkIn);
+      const endDateBooking = new Date(booking.checkOut);
 
       if (
         (dateTimeBooking >= startDateBooking && dateTimeBooking <= endDateBooking) ||
@@ -59,22 +59,22 @@ class Room {
     return false;
   }
 
-  occupancyPercentage(startDate: string, endDate: string) {
+  occupancyPercentage(startDate: Date, endDate: Date): number {
     // Devuelve el Porcentage de ocupación dentro del rango pasado por parámetros, incluidos los extremos
-    let availableAmount = 0;
+    let occupiedRoomsInThisRange = 0;
 
     for (const booking of this.bookings) {
       const startTime = startDate;
       const endTime = endDate;
-      const startDateBooking = booking.checkIn;
-      const endDateBooking = booking.checkOut;
+      const startDateBooking = new Date(booking.checkIn);
+      const endDateBooking = new Date(booking.checkOut);
 
       if ((startTime >= startDateBooking && endTime <= endDateBooking) || startTime == startDateBooking || endTime == endDateBooking) {
-        availableAmount += 1;
+        occupiedRoomsInThisRange += 1;
       }
     }
 
-    return (availableAmount / this.bookings.length) * 100;
+    return (occupiedRoomsInThisRange / this.bookings.length) * 100;
   }
 }
 
