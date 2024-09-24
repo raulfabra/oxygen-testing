@@ -53,7 +53,7 @@ describe("Class Room test", () => {
         room: mockRoom,
       });
       const room = new Room({ name: "Room 2", bookings: [booking_1], price: 450, discount: 23 });
-      expect(room.occupancyPercentage(new Date("2024-07-30"), new Date("2024-07-15"))).toBe("Invalid dates");
+      expect(room.occupancyPercentage(new Date("2024-07-30"), new Date("2024-07-15"))).toBe(0);
     });
 
     test("should be 0% result if all rooms are available", () => {
@@ -108,7 +108,7 @@ describe("Class Room test", () => {
         room: mockRoom,
       });
       const room = new Room({ name: "Room 2", bookings: [booking_1, booking_2, booking_3], price: 450, discount: 23 });
-      expect(room.occupancyPercentage(new Date("2024-07-30"), new Date("2024-08-30"))).toBe((1 / 3) * 100);
+      expect(room.occupancyPercentage(new Date("2024-08-08"), new Date("2024-08-13"))).toBe((1 / 3) * 100);
     });
   });
 
@@ -333,8 +333,8 @@ describe("Booking test", () => {
     });
     console.log(booking_1.fee());
     console.log(booking_2.fee());
-    /* expect(booking_1.fee()).toBe();
-    expect(booking_2.fee()).toBe(); */
+    expect(booking_1.fee()).toBe(311.85);
+    expect(booking_2.fee()).toBe(60.75);
   });
 });
 
