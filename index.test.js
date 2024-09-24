@@ -1,67 +1,333 @@
+const { describe } = require("node:test");
+
 const Room = require("./index").Room;
 const Booking = require("./index").Booking;
 
-const room1 = {
-  name: "Room 1",
-  rate: 250,
-  discount: 14,
-};
+describe("Class Room test", () => {
+  describe("check function ➡ isOccupied", () => {
+    test("should be return false if the room is available to booking", () => {
+      const booking_1 = new Booking({
+        name: "Manolo Gomez",
+        email: "booking@fake.com",
+        checkIn: new Date("2024-08-08"),
+        checkOut: new Date("2024-08-13"),
+        discount: 10,
+        room: room,
+      });
+      const room = new Room({ name: "Room 2", bookings: [booking_1], price: 450, discount: 23 });
+      const dateToCheck = new Date("2024-05-15");
+      expect(room.isOccupied(dateToCheck).toBe(false));
+    });
 
-const room2 = {
-  name: "Room 2",
-  rate: 450,
-  discount: 23,
-};
-
-const booking1 = {
-  name: "booking edreams",
-  email: "booking@fake.com",
-  checkin: new Date("08/26/2024"),
-  checkout: new Date("09/26/2024"),
-  discount: 10,
-};
-
-const booking2 = {
-  name: "booking trivago",
-  email: "booking2@fake.com",
-  checkin: new Date("08/24/2024"),
-  checkout: new Date("10/26/2024"),
-  discount: 30,
-};
-
-const booking3 = {
-  name: "booking corteIngles",
-  email: "booking3@fake.com",
-  checkin: new Date("08/26/2024"),
-  checkout: new Date("08/27/2024"),
-  discount: 50,
-};
-
-describe("Room tests", () => {
-  test("check for invalid typeOf data names", () => {
-    expect(new Room(1234)).toBe("Invalid type Name");
-    expect(new Room(true)).toBe("Invalid type Name");
-    expect(new Room({})).toBe("Invalid type Name");
-    expect(new Room(null)).toBe("Invalid type Name");
+    test("should be return true if the room is NOT available", () => {
+      const booking_1 = new Booking({
+        name: "Manolo Gomez",
+        email: "booking@fake.com",
+        checkIn: new Date("2024-08-08"),
+        checkOut: new Date("2024-08-13"),
+        discount: 10,
+        room: room,
+      });
+      const room = new Room({ name: "Room 2", bookings: [booking_1], price: 450, discount: 23 });
+      const dateToCheck = new Date("2024-08-10");
+      expect(room.isOccupied(dateToCheck).toBe(true));
+    });
   });
 
-  test("check for invalid typeOf Dates Room", () => {
-    expect(new Room("room 1", true, false)).toBe("Invalid type Dates");
+  describe("check function ➡ occupancyPercentage", () => {
+    test("should be throw an error if endDate is before than startDate", () => {
+      const booking_1 = new Booking({
+        name: "Manolo Gomez",
+        email: "booking@fake.com",
+        checkIn: new Date("2024-08-08"),
+        checkOut: new Date("2024-08-13"),
+        discount: 10,
+        room: room,
+      });
+      const room = new Room({ name: "Room 2", bookings: [booking_1], price: 450, discount: 23 });
+      expect(room.occupancyPercentage(new Date("2024-07-30"), new Date("2024-07-15"))).toBe("Invalid dates");
+    });
+
+    test("should be 0% result if all rooms are available", () => {
+      const booking_1 = new Booking({
+        name: "Manolo Gomez",
+        email: "booking@fake.com",
+        checkIn: new Date("2024-08-08"),
+        checkOut: new Date("2024-08-13"),
+        discount: 10,
+        room: room,
+      });
+      const room = new Room({ name: "Room 2", bookings: [booking_1], price: 450, discount: 23 });
+      expect(room.occupancyPercentage(new Date("2024-07-09"), new Date("2024-07-11"))).toBe(0);
+    });
+
+    test("should be 100% result if all rooms are booked", () => {
+      const booking_1 = new Booking({
+        name: "Manolo Gomez",
+        email: "booking@fake.com",
+        checkIn: new Date("2024-08-08"),
+        checkOut: new Date("2024-08-13"),
+        discount: 10,
+        room: room,
+      });
+      const room = new Room({ name: "Room 2", bookings: [booking_1], price: 450, discount: 23 });
+      expect(room.occupancyPercentage(new Date("2024-08-09"), new Date("2024-08-11"))).toBe(100);
+    });
+
+    test("should be 33.33% result in a occupancy Percentage Function", () => {
+      const booking_1 = new Booking({
+        name: "Manolo Gomez",
+        email: "booking@fake.com",
+        checkIn: new Date("2024-08-08"),
+        checkOut: new Date("2024-08-13"),
+        discount: 10,
+        room: room,
+      });
+      const booking_2 = new Booking({
+        name: "Jennifer Beltran",
+        email: "booking@fake.com",
+        checkIn: new Date("2024-06-08"),
+        checkOut: new Date("2024-06-13"),
+        discount: 10,
+        room: room,
+      });
+      const booking_3 = new Booking({
+        name: "Jose Alfonso",
+        email: "booking@fake.com",
+        checkIn: new Date("2024-03-08"),
+        checkOut: new Date("2024-03-13"),
+        discount: 10,
+        room: room,
+      });
+      const room = new Room({ name: "Room 2", bookings: [booking_1, booking_2, booking_3], price: 450, discount: 23 });
+      expect(room.occupancyPercentage(new Date("2024-07-30"), new Date("2024-08-30"))).toBe((1 / 3) * 100);
+    });
   });
 
-  test("check for valid Date booked", () => {
-    const booking_1 = new Booking({ booking1 }, room1);
-    const booking_2 = new Booking({ booking2 }, room1);
-    const booking_3 = new Booking({ booking3 }, room2);
-    const room = new Room(room1.name, [booking_1, booking_2, booking_3], room1.rate, room1.discount);
+  describe("check static function ➡ totalOccupancyPercentage", () => {
+    test("should be full percentage result on the static occupancy percentage function", () => {
+      const booking_1 = new Booking({
+        name: "Manolo Gomez",
+        email: "booking@fake.com",
+        checkIn: new Date("2024-08-01"),
+        checkOut: new Date("2024-08-30"),
+        discount: 10,
+        room: room1,
+      });
+      const booking_2 = new Booking({
+        name: "Jennifer Beltran",
+        email: "booking@fake.com",
+        checkIn: new Date("2024-08-10"),
+        checkOut: new Date("2024-08-30"),
+        discount: 10,
+        room: room1,
+      });
+      const booking_3 = new Booking({
+        name: "Jose Alfonso",
+        email: "booking@fake.com",
+        checkIn: new Date("2024-08-02"),
+        checkOut: new Date("2024-08-22"),
+        discount: 10,
+        room: room2,
+      });
+      const booking_4 = new Booking({
+        name: "Alicia Moreno",
+        email: "booking@fake.com",
+        checkIn: new Date("2024-08-07"),
+        checkOut: new Date("2024-08-29"),
+        discount: 10,
+        room: room2,
+      });
+      const booking_5 = new Booking({
+        name: "Raul Guevara",
+        email: "booking@fake.com",
+        checkIn: new Date("2024-08-11"),
+        checkOut: new Date("2024-08-29"),
+        discount: 10,
+        room: room2,
+      });
 
-    expect(room.name).toBe("Mock Room");
-    expect(room.rate).toBe(20000);
-    expect(room.discount).toBe(10);
-    expect(room.bookings).toHaveLength(3);
+      const room1 = new Room({ name: "Room 1", bookings: [booking_1, booking_2], price: 450, discount: 23 });
+      const room2 = new Room({ name: "Room 2", bookings: [booking_3, booking_4, booking_5], price: 250, discount: 5 });
+      const roomList = [room1, room2];
+      expect(Room.totalOccupancyPercentage(roomList, new Date("2024-08-15"), new Date("2024-08-20"))).toBe(100);
+    });
+    test("should be for a zero percentage result on the static occupancy percentage function", () => {
+      const booking_1 = new Booking({
+        name: "Manolo Gomez",
+        email: "booking@fake.com",
+        checkIn: new Date("2024-08-01"),
+        checkOut: new Date("2024-08-30"),
+        discount: 10,
+        room: room1,
+      });
+      const booking_2 = new Booking({
+        name: "Jennifer Beltran",
+        email: "booking@fake.com",
+        checkIn: new Date("2024-08-10"),
+        checkOut: new Date("2024-08-30"),
+        discount: 10,
+        room: room1,
+      });
+      const booking_3 = new Booking({
+        name: "Jose Alfonso",
+        email: "booking@fake.com",
+        checkIn: new Date("2024-08-02"),
+        checkOut: new Date("2024-08-22"),
+        discount: 10,
+        room: room2,
+      });
+      const booking_4 = new Booking({
+        name: "Alicia Moreno",
+        email: "booking@fake.com",
+        checkIn: new Date("2024-08-07"),
+        checkOut: new Date("2024-08-29"),
+        discount: 10,
+        room: room2,
+      });
+      const booking_5 = new Booking({
+        name: "Raul Guevara",
+        email: "booking@fake.com",
+        checkIn: new Date("2024-08-11"),
+        checkOut: new Date("2024-08-29"),
+        discount: 10,
+        room: room2,
+      });
+
+      const room1 = new Room({ name: "Room 1", bookings: [booking_1, booking_2], price: 450, discount: 23 });
+      const room2 = new Room({ name: "Room 2", bookings: [booking_3, booking_4, booking_5], price: 250, discount: 5 });
+      const roomList = [room1, room2];
+
+      expect(Room.totalOccupancyPercentage(roomList, new Date("2024-07-15"), new Date("2024-07-29"))).toBe(0);
+    });
   });
+  describe("check static function ➡ availableRooms", () => {
+    test("check for an empty result for the static availableRooms function", () => {
+      const booking_1 = new Booking({
+        name: "Manolo Gomez",
+        email: "booking@fake.com",
+        checkIn: new Date("2024-08-01"),
+        checkOut: new Date("2024-08-30"),
+        discount: 10,
+        room: room1,
+      });
+      const booking_2 = new Booking({
+        name: "Jennifer Beltran",
+        email: "booking@fake.com",
+        checkIn: new Date("2024-08-10"),
+        checkOut: new Date("2024-08-30"),
+        discount: 10,
+        room: room1,
+      });
+      const booking_3 = new Booking({
+        name: "Jose Alfonso",
+        email: "booking@fake.com",
+        checkIn: new Date("2024-08-02"),
+        checkOut: new Date("2024-08-22"),
+        discount: 10,
+        room: room2,
+      });
+      const booking_4 = new Booking({
+        name: "Alicia Moreno",
+        email: "booking@fake.com",
+        checkIn: new Date("2024-08-07"),
+        checkOut: new Date("2024-08-29"),
+        discount: 10,
+        room: room2,
+      });
+      const booking_5 = new Booking({
+        name: "Raul Guevara",
+        email: "booking@fake.com",
+        checkIn: new Date("2024-08-11"),
+        checkOut: new Date("2024-08-29"),
+        discount: 10,
+        room: room2,
+      });
 
-  test("check for is occupied function", () => {
+      const room1 = new Room({ name: "Room 1", bookings: [booking_1, booking_2], price: 450, discount: 23 });
+      const room2 = new Room({ name: "Room 2", bookings: [booking_3, booking_4, booking_5], price: 250, discount: 5 });
+      const roomList = [room1, room2];
+      expect(Room.availableRooms(roomList, new Date("2024-08-15"), new Date("2024-08-20"))).toHaveLength(0);
+    });
+
+    test("check for a complete result for the static availableRooms function", () => {
+      const booking_1 = new Booking({
+        name: "Manolo Gomez",
+        email: "booking@fake.com",
+        checkIn: new Date("2024-08-01"),
+        checkOut: new Date("2024-08-30"),
+        discount: 10,
+        room: room1,
+      });
+      const booking_2 = new Booking({
+        name: "Jennifer Beltran",
+        email: "booking@fake.com",
+        checkIn: new Date("2024-08-10"),
+        checkOut: new Date("2024-08-30"),
+        discount: 10,
+        room: room1,
+      });
+      const booking_3 = new Booking({
+        name: "Jose Alfonso",
+        email: "booking@fake.com",
+        checkIn: new Date("2024-08-02"),
+        checkOut: new Date("2024-08-22"),
+        discount: 10,
+        room: room2,
+      });
+      const booking_4 = new Booking({
+        name: "Alicia Moreno",
+        email: "booking@fake.com",
+        checkIn: new Date("2024-08-07"),
+        checkOut: new Date("2024-08-29"),
+        discount: 10,
+        room: room2,
+      });
+      const booking_5 = new Booking({
+        name: "Raul Guevara",
+        email: "booking@fake.com",
+        checkIn: new Date("2024-08-11"),
+        checkOut: new Date("2024-08-29"),
+        discount: 10,
+        room: room2,
+      });
+
+      const room1 = new Room({ name: "Room 1", bookings: [booking_1, booking_2], price: 450, discount: 23 });
+      const room2 = new Room({ name: "Room 2", bookings: [booking_3, booking_4, booking_5], price: 250, discount: 5 });
+      const roomList = [room1, room2];
+
+      expect(Room.availableRooms(roomList, new Date("2024-07-15"), new Date("2024-07-29"))).toHaveLength(2);
+    });
+  });
+});
+
+describe("Booking test", () => {
+  test("should be for fee function", () => {
+    const room = new Room({ name: "Room 2", bookings: [booking_1, booking_2, booking_3], price: 450, discount: 23 });
+
+    const booking_1 = new Booking({
+      name: "Manolo Gomez",
+      email: "booking@fake.com",
+      checkIn: new Date("2024-08-01"),
+      checkOut: new Date("2024-08-30"),
+      discount: 10,
+      room: room,
+    });
+    const booking_2 = new Booking({
+      name: "Jennifer Beltran",
+      email: "booking@fake.com",
+      checkIn: new Date("2024-08-10"),
+      checkOut: new Date("2024-08-30"),
+      discount: 10,
+      room: room,
+    });
+    expect(booking_1.fee()).toBe();
+    expect(booking_2.fee()).toBe();
+  });
+});
+
+/*
+test("check for is occupied function", () => {
     const booking_1 = new Booking({ booking1 }, room1);
     const booking_2 = new Booking({ booking2 }, room1);
     const booking_3 = new Booking({ booking3 }, room2);
@@ -70,15 +336,6 @@ describe("Room tests", () => {
     expect(room.isOccupied("hello")).toBe("Invalid data");
     expect(room.isOccupied([])).toBe("Invalid data");
     expect(room.isOccupied(new Date("quesoParmesano"))).toBe("Invalid data");
-  });
-
-  test("check if is occupied function actually works", () => {
-    const booking_1 = new Booking({ booking1 }, room1);
-    const booking_2 = new Booking({ booking2 }, room1);
-    const booking_3 = new Booking({ booking3 }, room2);
-    const room = new Room(room1.name, [booking_1, booking_2, booking_3], room1.rate, room1.discount);
-    expect(room.isOccupied(new Date("08/26/2024"))).toBe(true);
-    expect(room.isOccupied(new Date("08/26/2025"))).toBe(false);
   });
 
   test("check for occupancy percentage function", () => {
@@ -95,16 +352,6 @@ describe("Room tests", () => {
     expect(room.occupancyPercentage(new Date("quesoParmesano"), new Date("JamonJoselito"))).toBe("Invalid data");
   });
 
-  test("check if occupancy percentage function actually works", () => {
-    const booking_1 = new Booking({ booking1 }, room1);
-    const booking_2 = new Booking({ booking2 }, room1);
-    const booking_3 = new Booking({ booking3 }, room2);
-    const room = new Room(room1.name, [booking_1, booking_2, booking_3], room1.rate, room1.discount);
-    expect(room.occupancyPercentage(new Date("08/26/2024"), new Date("08/28/2024"))).toBe(100);
-    expect(room.occupancyPercentage(new Date("08/25/2024"), new Date("08/26/2024"))).toBe((1 / 3) * 100);
-    expect(room.occupancyPercentage(new Date("08/26/2030"), new Date("08/28/2030"))).toBe(0);
-  });
-
   test("check for static occupancy percentage function", () => {
     expect(Room.totalOccupancyPercentage(true)).toBe("Invalid data");
     expect(Room.totalOccupancyPercentage("hello")).toBe("Invalid data");
@@ -113,11 +360,6 @@ describe("Room tests", () => {
     expect(Room.totalOccupancyPercentage([])).toBe("Invalid data");
     expect(Room.totalOccupancyPercentage(new Date("quesoParmesano"))).toBe("Invalid data");
     expect(Room.totalOccupancyPercentage([], new Date("quesoParmesano"), new Date("JamonJoselito"))).toBe("Invalid data");
-  });
-
-  test("check if static occupancy percentage function actually works", () => {
-    expect(Room.totalOccupancyPercentage(roomList, new Date("08/26/2024"), new Date("08/28/2024"))).toBe(100);
-    expect(Room.totalOccupancyPercentage(roomList, new Date("08/26/2030"), new Date("08/28/2030"))).toBe(0);
   });
 
   test("check for static available rooms function", () => {
@@ -129,15 +371,11 @@ describe("Room tests", () => {
     expect(Room.availableRooms(new Date("quesoParmesano"))).toBe("Invalid data");
     expect(Room.availableRooms([], new Date("quesoParmesano"), new Date("JamonJoselito"))).toBe("Invalid data");
   });
+  */
 
-  test("check if static occupancy percentage function actually works", () => {
-    expect(Room.availableRooms(roomList, new Date("08/26/2024"), new Date("08/28/2024"))).toHaveLength(0);
-    expect(Room.availableRooms(roomList, new Date("08/26/2030"), new Date("08/28/2030"))).toHaveLength(2);
-  });
-});
-
-describe("Booking test", () => {
-  test("check for invalid data", () => {
+//BOOKING TEST CLASS
+/*
+   test("check for invalid data", () => {
     expect(new Booking("quesoParmesano").result).toBe("Invalid data");
     expect(new Booking(123).result).toBe("Invalid data");
     expect(new Booking(true).result).toBe("Invalid data");
@@ -155,11 +393,4 @@ describe("Booking test", () => {
     expect(booking.discount).toBe(10);
     expect(booking.room).toBe(mockRoom);
   });
-
-  test("check for fee function", () => {
-    const booking = new Booking(booking1.name, booking1.email, booking1.checkin, booking1.checkout, booking1.discount, room1);
-    const booking2 = new Booking(mockBooking2.name, mockBooking2.email, mockBooking2.checkin, mockBooking2.checkout, mockBooking2.discount, mockRoom);
-    expect(booking.fee()).toBe(162);
-    expect(booking2.fee()).toBe(126);
-  });
-});
+  */
